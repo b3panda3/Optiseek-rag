@@ -11,6 +11,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Free up disk space
+        run: |
+          echo "=== Before cleanup ==="
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+                      /usr/local/.ghcup /opt/hostedtoolcache \
+                      /usr/lib/google-cloud-sdk /usr/lib/jvm \
+                      /usr/local/share/boost /usr/local/share/ffmpeg \
+                      /usr/share/swift /usr/local/share/chrom*
+          sudo apt-get clean
+          sudo apt-get autoremove -y
+          docker system prune -af --volumes
+          echo "=== After cleanup ==="
+          df -h /
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -28,3 +43,5 @@ jobs:
           tags: b3panda3/optiseek-rag:latest
           build-args: |
             BAKE_WEIGHTS=true
+          cache-from: type=registry,ref=b3panda3/optiseek-rag:cache
+          cache-to: type=registry,ref=b3panda3/optiseek-rag:cache,mode=max
