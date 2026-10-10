@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+_test_output/
+output/
+index/
+*.log
+.vscode/
+.DS_Store
+models/
+*.safetensors
+*.bin
+.env

@@ -1,0 +1,84 @@
+{
+  "challenge": "mini-challenge-3",
+  "description": "RAG over a mixed-filetype corpus. SAMPLE set; the graded set is different and harder.",
+  "corpus": "mc3-corpus",
+  "queries": [
+    {
+      "n": 1,
+      "query": "What is the maximum junction temperature of the TQ-40?",
+      "expected_answer": "94",
+      "answer_aliases": ["94 C", "94°C", "94 degrees"],
+      "expected_citations": ["specs/tq40_datasheet_r2.pdf"],
+      "category": "pdf, superseded-document trap"
+    },
+    {
+      "n": 2,
+      "query": "In which quarter does the TQ-60 enter customer sampling?",
+      "expected_answer": "Q3 FY27",
+      "answer_aliases": ["Q3FY27"],
+      "expected_citations": ["planning/roadmap_fy27.docx"],
+      "category": "docx, single-hop"
+    },
+    {
+      "n": 3,
+      "query": "What is the part number of the field-replaceable fan assembly for the TQ-40?",
+      "expected_answer": "ORR-FAN-2214-B",
+      "expected_citations": ["support/rma_parts.xlsx"],
+      "category": "xlsx, single-hop"
+    },
+    {
+      "n": 4,
+      "query": "Which firmware version fixed ticket ORR-1847?",
+      "expected_answer": "4.3.2",
+      "answer_aliases": ["Meridian 4.3.2"],
+      "expected_citations": ["support/bug_database.csv"],
+      "category": "csv, single-hop"
+    },
+    {
+      "n": 5,
+      "query": "What error code is logged when the thermal throttle engages?",
+      "expected_answer": "E7731",
+      "expected_citations": ["logs/prod_inference_2026-09-02.log"],
+      "category": "text log, single-hop"
+    },
+    {
+      "n": 6,
+      "query": "What is the default batch timeout, in seconds, in the ingest service?",
+      "expected_answer": "180",
+      "answer_aliases": ["180 seconds", "180s"],
+      "expected_citations": ["engineering/ingest_service.py"],
+      "category": "python source, single-hop"
+    },
+    {
+      "n": 7,
+      "query": "Which backplane pin carries THERM_ALERT# on the TQ-40?",
+      "expected_answer": "B14",
+      "answer_aliases": ["pin B14"],
+      "expected_citations": ["specs/backplane_pinout.png"],
+      "category": "png, multimodal"
+    },
+    {
+      "n": 8,
+      "query": "What board revision is printed on the asset label?",
+      "expected_answer": "REV-C2",
+      "expected_citations": ["support/asset_label.jpg"],
+      "category": "jpg, multimodal"
+    },
+    {
+      "n": 9,
+      "query": "The production log shows a thermal throttle incident. Which firmware release fixed the underlying defect?",
+      "expected_answer": "4.3.2",
+      "answer_aliases": ["Meridian 4.3.2"],
+      "expected_citations": ["logs/prod_inference_2026-09-02.log", "support/bug_database.csv"],
+      "category": "multi-hop, two citations required"
+    },
+    {
+      "n": 10,
+      "query": "What is the unit price of the TQ-40 at 10,000 unit volume?",
+      "expected_answer": "",
+      "expected_citations": [],
+      "unanswerable": true,
+      "category": "refusal"
+    }
+  ]
+}
