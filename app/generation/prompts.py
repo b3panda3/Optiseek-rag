@@ -1,5 +1,16 @@
-"""Prompt templates for the RAG LLM. Citation necessity rules baked in."""
+"""prompts.py — Prompt templates for the RAG LLM.
 
+The prompt is the single most important factor in getting correct answers
+with correct citations. It must:
+1. Tell the LLM to answer with the VALUE ONLY (no sentences)
+2. Tell the LLM to include qualifiers that are part of the value (Q3 FY27, not Q3)
+3. Tell the LLM to cite ONLY necessary files (necessity, not relevance)
+4. Tell the LLM to ignore WITHDRAWN/SUPERSEDED documents
+5. Tell the LLM to return empty answer + empty citations if the answer isn't in the context
+6. Force strict JSON output
+"""
+
+# System prompt — describes the rules
 SYSTEM_PROMPT = """You are a precise document retrieval system. You answer questions using ONLY the provided context.
 
 RULES:
@@ -21,16 +32,36 @@ CITATIONS:
 OUTPUT FORMAT (strict JSON):
 {"answer": "<value or empty string>", "citations": ["<file1>", "<file2>"], "confidence": <0.0-1.0>}"""
 
-def build_answer_prompt(query, chunks):
+
+def build_answer_prompt(query: str, chunks: list[dict]) -> str:
+    """Build the prompt for the LLM.
+
+    Args:
+        query: The question to answer.
+        chunks: Retrieved chunks, each with "file", "text", "score".
+
+    Returns:
+        A prompt string ready for the LLM.
+    """
+    # Build context from retrieved chunks
     context_parts = []
+    seen_files = set()
+
     for chunk in chunks:
         file_path = chunk["file"]
         text = chunk["text"]
+        score = chunk.get("score", 0)
+
+        # Mark withdrawn documents
         metadata = chunk.get("metadata", {})
         withdrawn = metadata.get("withdrawn", False)
         marker = " [WITHDRAWN/SUPERSEDED]" if withdrawn else ""
+
         context_parts.append(f"--- FILE: {file_path}{marker} ---\n{text}")
+        seen_files.add(file_path)
+
     context = "\n\n".join(context_parts)
+
     prompt = f"""{SYSTEM_PROMPT}
 
 CONTEXT (retrieved from corpus):
@@ -42,4 +73,26 @@ Answer using ONLY the context above. If the context does not contain the answer,
 
 Respond as strict JSON only (no markdown, no code fence):
 {{"answer": "...", "citations": [...], "confidence": ...}}"""
+
+    return prompt
+
+
+def build_verification_prompt(query: str, answer: str, context: str) -> str:
+    """Build a prompt for citation verification.
+
+    Used by the CitationVerifier to check if an answer can still be derived
+    from a reduced context (with one file removed).
+    """
+    prompt = f"""{SYSTEM_PROMPT}
+
+CONTEXT (retrieved from corpus):
+{context}
+
+QUESTION: {query}
+
+Answer using ONLY the context above. If the context does not contain the answer, return an empty answer and empty citations.
+
+Respond as strict JSON only (no markdown, no code fence):
+{{"answer": "...", "citations": [...], "confidence": ...}}"""
+
     return prompt

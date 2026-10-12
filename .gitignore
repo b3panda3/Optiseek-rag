@@ -1,12 +1,34 @@
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+
+# Local test output
 _test_output/
 output/
 index/
 *.log
+
+# Editor
 .vscode/
+.idea/
+*.swp
+*.swo
 .DS_Store
+
+# Local model weights (do NOT commit)
 models/
+/models/
 *.safetensors
 *.bin
+
+# Docker
+docker-compose.override.yml
+
+# Env
 .env
+.env.local

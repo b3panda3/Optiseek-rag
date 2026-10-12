@@ -1,9 +1,31 @@
+# Optiseek RAG dependencies
+# Install with torch constraint to prevent pip from replacing ROCm torch:
+#   pip install -c constraints.txt -r requirements.txt
+#
+# The base image (rocm/pytorch:rocm10.0_...) ships torch 2.13.0+rocm10.0.0.
+# We pin it in a constraints file generated at build time.
+
+# Inference — transformers for LLM, VLM, and embeddings
 transformers>=4.49.0
+
+# Quantization (optional — only needed if using 4-bit LLM)
+# bitsandbytes>=0.43
+
+# PDF parsing
 PyMuPDF>=1.24.0
+
+# DOCX parsing
 python-docx>=1.1.0
+
+# XLSX parsing
 openpyxl>=3.1.0
+
+# Embeddings model support (loaded via transformers, not sentence-transformers
+# to avoid pulling a different torch)
 huggingface_hub>=0.27.0
+
+# Image handling (already in base, pinned for safety)
 Pillow>=10.4.0
+
+# Numerical (already in base, pinned for safety)
 numpy>=1.26.0
-accelerate>=1.2.0
-accelerate>=1.2.0
